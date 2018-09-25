@@ -35,6 +35,12 @@ describe('<HomePage />', () => {
       expect(renderedComponent.state().secondOperand).toBeNull();
       expect(renderedComponent.state().operator).toBeNull();
     });
+    it('does not update if we have 2 dots in any operand', () => {
+      renderedComponent.instance().updateOperand('.');
+      renderedComponent.instance().updateOperand('1');
+      renderedComponent.instance().updateOperand('.');
+      expect(renderedComponent.state().firstOperand).toEqual('.1');
+    });
   });
   describe('has an updateOperator function that', () => {
     let renderedComponent = null;
@@ -82,24 +88,31 @@ describe('<HomePage />', () => {
   });
   describe('has an equal that', () => {
     let renderedComponent = null;
-    beforeEach(() => {
+    it('does nothing if no operation is picked ', () => {
       renderedComponent = shallow(<HomePage />);
       const instance = renderedComponent.instance();
-      instance.updateOperand('1');
-      instance.updateOperator('+');
-      instance.updateOperand('3');
       instance.processCalculator('=');
     });
-    it('process the operation', () => {
-      const state = renderedComponent.state();
-      expect(state.output).toEqual(4);
-    });
-    it('reset the calculator once it has processed', () => {
-      const state = renderedComponent.state();
-      expect(state.output).toEqual(4);
-      expect(state.firstOperand).toBeNull();
-      expect(state.operator).toBeNull();
-      expect(state.secondOperand).toBeNull();
+    describe('with value', () => {
+      beforeEach(() => {
+        renderedComponent = shallow(<HomePage />);
+        const instance = renderedComponent.instance();
+        instance.updateOperand('1');
+        instance.updateOperator('+');
+        instance.updateOperand('3');
+        instance.processCalculator('=');
+      });
+      it('process the operation', () => {
+        const state = renderedComponent.state();
+        expect(state.output).toEqual(4);
+      });
+      it('reset the calculator once it has processed', () => {
+        const state = renderedComponent.state();
+        expect(state.output).toEqual(4);
+        expect(state.firstOperand).toBeNull();
+        expect(state.operator).toBeNull();
+        expect(state.secondOperand).toBeNull();
+      });
     });
   });
   describe('has an reset that', () => {
@@ -114,7 +127,7 @@ describe('<HomePage />', () => {
       instance.processCalculator('=');
     });
     it('clears the calculator', () => {
-      instance.processCalculator('CE');
+      instance.processCalculator('C');
       const state = renderedComponent.state();
 
       expect(state.firstOperand).toBeNull();

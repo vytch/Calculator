@@ -11,13 +11,15 @@
 
 import React from 'react';
 import DigiPad from 'components/DigiPad';
+import CalculatorContainer from './CalculatorContainer';
+import OutputContainer from './OutputContainer';
 import { calculator } from '../../utils/calculator';
 /* eslint-disable react/prefer-stateless-function */
 export default class HomePage extends React.PureComponent {
   constructor() {
     super();
     this.state = {
-      output: '',
+      output: null,
       firstOperand: null,
       secondOperand: null,
       operator: null,
@@ -69,7 +71,9 @@ export default class HomePage extends React.PureComponent {
   }
   processCalculator(value) {
     if (value === '=') {
-      console.log(calculator);
+      if (this.state.operator === null) {
+        return;
+      }
       this.setState(prevState => ({
         firstOperand: null,
         secondOperand: null,
@@ -80,7 +84,7 @@ export default class HomePage extends React.PureComponent {
         ),
       }));
     }
-    if (value === 'CE') {
+    if (value === 'C') {
       this.setState({
         firstOperand: null,
         secondOperand: null,
@@ -90,30 +94,63 @@ export default class HomePage extends React.PureComponent {
     }
   }
   updateOperand(value) {
+    console.log(value);
     // If the operator is null, then we know we need to touch the first operand.
     if (this.state.operator === null) {
-      this.setState(prevState => ({
-        firstOperand:
-          prevState.firstOperand === null
-            ? value
-            : prevState.firstOperand + value,
-      }));
+      this.setState(prevState => {
+        if (
+          value === '.' &&
+          typeof prevState.firstOperand === 'string' &&
+          prevState.firstOperand.indexOf('.') !== -1
+        ) {
+          return {
+            firstOperand: prevState.firstOperand,
+          };
+        }
+        return {
+          firstOperand:
+            prevState.firstOperand === null
+              ? value
+              : prevState.firstOperand + value,
+        };
+      });
     } else {
-      this.setState(prevState => ({
-        secondOperand:
-          prevState.secondOperand === null
-            ? value
-            : prevState.secondOperand + value,
-      }));
+      this.setState(prevState => {
+        if (
+          value === '.' &&
+          typeof prevState.secondOperand === 'string' &&
+          prevState.secondOperand.indexOf('.') !== -1
+        ) {
+          return {
+            secondOperand: prevState.secondOperand,
+          };
+        }
+        return {
+          secondOperand:
+            prevState.secondOperand === null
+              ? value
+              : prevState.secondOperand + value,
+        };
+      });
     }
     this.updateOutput();
+  }
+  formatOutput(output) {
+    if (output === null) {
+      return 0;
+    }
+    return output;
   }
   render() {
     return (
       <div>
         <h1>My react calculator</h1>
-        Output: {this.state.output}
-        <DigiPad onInputTap={this.handleTap} />
+        <CalculatorContainer>
+          <OutputContainer>
+            {this.formatOutput(this.state.output)}
+          </OutputContainer>
+          <DigiPad onInputTap={this.handleTap} />
+        </CalculatorContainer>
       </div>
     );
   }
