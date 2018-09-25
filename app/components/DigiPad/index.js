@@ -57,10 +57,10 @@ class DigiPad extends React.Component {
           /
         </button>
 
-        <button data-type="state" value="=" onClick={this.props.onInputTap}>
+        <button data-type="process" value="=" onClick={this.props.onInputTap}>
           =
         </button>
-        <button data-type="state" value="#" onClick={this.props.onInputTap}>
+        <button data-type="process" value="CE" onClick={this.props.onInputTap}>
           CE
         </button>
       </div>

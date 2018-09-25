@@ -14,13 +14,15 @@ describe('<HomePage />', () => {
     expect(state.firstOperand).toBeDefined();
     expect(state.secondOperand).toBeDefined();
   });
-  xdescribe('has an updateOperand function that', () => {
+  describe('has an updateOperand function that', () => {
+    let renderedComponent = null;
+    beforeEach(() => {
+      renderedComponent = shallow(<HomePage />);
+    });
     it('is defined', () => {
-      const renderedComponent = shallow(<HomePage />);
       expect(renderedComponent.instance().updateOperand).toBeDefined();
     });
     it('updates the first operand if no operation is set', () => {
-      const renderedComponent = shallow(<HomePage />);
       expect(renderedComponent.state().firstOperand).toBeNull();
       expect(renderedComponent.state().secondOperand).toBeNull();
       expect(renderedComponent.state().operator).toBeNull();
@@ -34,24 +36,24 @@ describe('<HomePage />', () => {
       expect(renderedComponent.state().operator).toBeNull();
     });
   });
-  xdescribe('has an updateOperator function that', () => {
+  describe('has an updateOperator function that', () => {
+    let renderedComponent = null;
+    beforeEach(() => {
+      renderedComponent = shallow(<HomePage />);
+    });
     it('is defined', () => {
-      const renderedComponent = shallow(<HomePage />);
       expect(renderedComponent.instance().updateOperator).toBeDefined();
     });
     it('does not update if the first operand value is still null', () => {
-      const renderedComponent = shallow(<HomePage />);
       renderedComponent.instance().updateOperator('+');
       expect(renderedComponent.state().operator).toBeNull();
     });
     it('updates the value of the operator if the first operand has a value', () => {
-      const renderedComponent = shallow(<HomePage />);
       renderedComponent.instance().updateOperand('1');
       renderedComponent.instance().updateOperator('+');
       expect(renderedComponent.state().operator).toEqual('+');
     });
     it('does update if called more than once in a row', () => {
-      const renderedComponent = shallow(<HomePage />);
       renderedComponent.instance().updateOperand('1');
       renderedComponent.instance().updateOperator('+');
       expect(renderedComponent.state().operator).toEqual('+');
@@ -59,7 +61,6 @@ describe('<HomePage />', () => {
       expect(renderedComponent.state().operator).toEqual('*');
     });
     it('allows the editoing of the second operand', () => {
-      const renderedComponent = shallow(<HomePage />);
       renderedComponent.instance().updateOperand('1');
       renderedComponent.instance().updateOperator('+');
       renderedComponent.instance().updateOperand('1');
@@ -77,6 +78,49 @@ describe('<HomePage />', () => {
       const renderedComponent = shallow(<HomePage />);
       renderedComponent.instance().updateOperand('1');
       expect(renderedComponent.state().output).toEqual('1');
+    });
+  });
+  describe('has an equal that', () => {
+    let renderedComponent = null;
+    beforeEach(() => {
+      renderedComponent = shallow(<HomePage />);
+      const instance = renderedComponent.instance();
+      instance.updateOperand('1');
+      instance.updateOperator('+');
+      instance.updateOperand('3');
+      instance.processCalculator('=');
+    });
+    it('process the operation', () => {
+      const state = renderedComponent.state();
+      expect(state.output).toEqual(4);
+    });
+    it('reset the calculator once it has processed', () => {
+      const state = renderedComponent.state();
+      expect(state.output).toEqual(4);
+      expect(state.firstOperand).toBeNull();
+      expect(state.operator).toBeNull();
+      expect(state.secondOperand).toBeNull();
+    });
+  });
+  describe('has an reset that', () => {
+    let renderedComponent = null;
+    let instance = null;
+    beforeEach(() => {
+      renderedComponent = shallow(<HomePage />);
+      instance = renderedComponent.instance();
+      instance.updateOperand('1');
+      instance.updateOperator('+');
+      instance.updateOperand('3');
+      instance.processCalculator('=');
+    });
+    it('clears the calculator', () => {
+      instance.processCalculator('CE');
+      const state = renderedComponent.state();
+
+      expect(state.firstOperand).toBeNull();
+      expect(state.operator).toBeNull();
+      expect(state.secondOperand).toBeNull();
+      expect(state.output).toBeNull();
     });
   });
 });

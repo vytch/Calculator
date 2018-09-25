@@ -11,7 +11,7 @@
 
 import React from 'react';
 import DigiPad from 'components/DigiPad';
-
+import { calculator } from '../../utils/calculator';
 /* eslint-disable react/prefer-stateless-function */
 export default class HomePage extends React.PureComponent {
   constructor() {
@@ -32,6 +32,8 @@ export default class HomePage extends React.PureComponent {
       this.updateOperator(value);
     } else if (type === 'operand') {
       this.updateOperand(value);
+    } else if (type === 'process') {
+      this.processCalculator(value);
     }
   }
   updateOutput() {
@@ -64,6 +66,28 @@ export default class HomePage extends React.PureComponent {
       });
     }
     this.updateOutput();
+  }
+  processCalculator(value) {
+    if (value === '=') {
+      console.log(calculator);
+      this.setState(prevState => ({
+        firstOperand: null,
+        secondOperand: null,
+        operator: null,
+        output: calculator(prevState.operator)(
+          prevState.firstOperand,
+          prevState.secondOperand,
+        ),
+      }));
+    }
+    if (value === 'CE') {
+      this.setState({
+        firstOperand: null,
+        secondOperand: null,
+        operator: null,
+        output: null,
+      });
+    }
   }
   updateOperand(value) {
     // If the operator is null, then we know we need to touch the first operand.
