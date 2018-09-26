@@ -1,3 +1,7 @@
+// Simple factory.
+// Base on the type of operator we return a function.
+// If we wanted to add more (cos, sin, we just need to add it here)
+
 const calculator = operator => {
   switch (operator) {
     case '+':

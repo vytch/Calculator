@@ -24,6 +24,7 @@ export default class HomePage extends React.PureComponent {
     // When we click on a button, we essentially care about 2 things:
     // What type of button we have pressed (operand, operator, process).
     // And its value.
+    // This way if we wanted to add more types (ex fn for cos and sin), then we just need to create one method in this class and call it from here.
     const { value } = e.target;
     const type = e.target.getAttribute('data-type');
 
