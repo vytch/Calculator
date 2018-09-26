@@ -1,14 +1,3 @@
-/*
- * HomePage
- *
- * This is the first thing users see of our App, at the '/' route
- *
- * NOTE: while this component should technically be a stateless functional
- * component (SFC), hot reloading does not currently support SFCs. If hot
- * reloading is not a necessity for you then you can refactor it and remove
- * the linting exception.
- */
-
 import React from 'react';
 import DigiPad from 'components/DigiPad';
 import CalculatorContainer from './CalculatorContainer';
@@ -18,6 +7,8 @@ import { calculator } from '../../utils/calculator';
 export default class HomePage extends React.PureComponent {
   constructor() {
     super();
+
+    // State of the application.
     this.state = {
       output: null,
       firstOperand: null,
@@ -25,11 +16,19 @@ export default class HomePage extends React.PureComponent {
       operator: null,
     };
 
+    // We use a single evednt for all button actions.
+    // We will work out what to do based on what the button attributes are.
     this.handleTap = this.onTap.bind(this);
   }
   onTap(e) {
+    // When we click on a button, we essentially care about 2 things:
+    // What type of button we have pressed (operand, operator, process).
+    // And its value.
     const { value } = e.target;
     const type = e.target.getAttribute('data-type');
+
+    // Based on the type, we will trigger a different action.
+    // Since the app is quite simple, I did not feel the use of redux was necessary.
     if (type === 'operator') {
       this.updateOperator(value);
     } else if (type === 'operand') {
@@ -38,18 +37,29 @@ export default class HomePage extends React.PureComponent {
       this.processCalculator(value);
     }
   }
+
+  // This function is responsible for updating the output.
+  // The output basically try to display the last action from the user in this order:
+  // - Update of first operand
+  // - Update of Operator
+  // - Update of the second operand.
+
   updateOutput() {
     this.setState(prevState => {
-      let output = '';
+      let output = null;
+
       if (prevState.firstOperand != null && prevState.operator === null) {
+        // If we have only the value of the first opersnd, then display the first operand.
         output = prevState.firstOperand;
       } else if (
+        // If we have the first operand and the operator, then display the operator
         prevState.firstOperand != null &&
         prevState.operator != null &&
         prevState.secondOperand === null
       ) {
         output = prevState.operator;
       } else if (
+        // If we have the first operand and the operator, then display second operator
         prevState.firstOperand != null &&
         prevState.operator != null &&
         prevState.secondOperand != null
@@ -61,17 +71,30 @@ export default class HomePage extends React.PureComponent {
       };
     });
   }
+  // This function sets the operator we want.
   updateOperator(value) {
-    if (this.state.firstOperand !== null) {
+    // To update the operator, we need to have the first operand
+    if (this.state.secondOperand !== null) {
+      return;
+    }
+    if (this.state.firstOperand !== null && this.state.firstOperand !== '.') {
       this.setState({
         operator: value,
       });
+    } else if (this.state.output !== null && this.state.firstOperand !== '.') {
+      this.setState(prevState => ({
+        firstOperand: `${prevState.output}`,
+        operator: value,
+      }));
     }
     this.updateOutput();
   }
+
+  // This part processes the calculator.
   processCalculator(value) {
     if (value === '=') {
-      if (this.state.operator === null) {
+      // We should not process the = if no operator has been set
+      if (this.state.operator === null || this.state.secondOperand === '.') {
         return;
       }
       this.setState(prevState => ({
@@ -85,6 +108,7 @@ export default class HomePage extends React.PureComponent {
       }));
     }
     if (value === 'C') {
+      // We can clear the app
       this.setState({
         firstOperand: null,
         secondOperand: null,
@@ -94,9 +118,10 @@ export default class HomePage extends React.PureComponent {
     }
   }
   updateOperand(value) {
-    console.log(value);
     // If the operator is null, then we know we need to touch the first operand.
     if (this.state.operator === null) {
+      // If we use the . then we need to be sures it has not been used before.
+      // JS allows the use of .1 and 1. so we leave it.
       this.setState(prevState => {
         if (
           value === '.' &&
@@ -135,6 +160,8 @@ export default class HomePage extends React.PureComponent {
     }
     this.updateOutput();
   }
+  // Formal the output.
+  // Basically if the output is still null, we display 0.
   formatOutput(output) {
     if (output === null) {
       return 0;
@@ -144,8 +171,8 @@ export default class HomePage extends React.PureComponent {
   render() {
     return (
       <div>
-        <h1>My react calculator</h1>
         <CalculatorContainer>
+          <h1>My react calculator</h1>
           <OutputContainer>
             {this.formatOutput(this.state.output)}
           </OutputContainer>

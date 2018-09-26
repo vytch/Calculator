@@ -78,6 +78,21 @@ describe('<HomePage />', () => {
       expect(renderedComponent.state().firstOperand).toEqual('1');
       expect(renderedComponent.state().secondOperand).toEqual('11');
     });
+    it('does not anything if the first operand is just a .', () => {
+      renderedComponent.instance().updateOperand('.');
+      renderedComponent.instance().updateOperator('+');
+      expect(renderedComponent.state().firstOperand).toEqual('.');
+      expect(renderedComponent.state().operator).toBeNull();
+    });
+    it('does not anything if the second operand is not null', () => {
+      renderedComponent.instance().updateOperand('1');
+      renderedComponent.instance().updateOperator('+');
+      renderedComponent.instance().updateOperand('1');
+      renderedComponent.instance().updateOperator('-');
+      expect(renderedComponent.state().firstOperand).toEqual('1');
+      expect(renderedComponent.state().operator).toBe('+');
+      expect(renderedComponent.state().secondOperand).toEqual('1');
+    });
   });
   describe('has an output that', () => {
     it('displays the first operand when everything else is null', () => {
@@ -92,6 +107,20 @@ describe('<HomePage />', () => {
       renderedComponent = shallow(<HomePage />);
       const instance = renderedComponent.instance();
       instance.processCalculator('=');
+    });
+    describe('when the second operand is just a .', () => {
+      it('does nothing', () => {
+        renderedComponent = shallow(<HomePage />);
+        const instance = renderedComponent.instance();
+        instance.updateOperand('1');
+        instance.updateOperator('+');
+        instance.updateOperand('.');
+        instance.processCalculator('=');
+        expect(renderedComponent.state().firstOperand).toEqual('1');
+        expect(renderedComponent.state().operator).toBe('+');
+        expect(renderedComponent.state().secondOperand).toEqual('.');
+        expect(renderedComponent.state().output).toBe('.');
+      });
     });
     describe('with value', () => {
       beforeEach(() => {
@@ -134,6 +163,28 @@ describe('<HomePage />', () => {
       expect(state.operator).toBeNull();
       expect(state.secondOperand).toBeNull();
       expect(state.output).toBeNull();
+    });
+  });
+  describe('after an operation', () => {
+    let renderedComponent = null;
+    let instance = null;
+    beforeEach(() => {
+      renderedComponent = shallow(<HomePage />);
+      instance = renderedComponent.instance();
+      instance.updateOperand('1');
+      instance.updateOperator('+');
+      instance.updateOperand('3');
+      instance.processCalculator('=');
+    });
+    it('can reuse the output for more operation', () => {
+      expect(renderedComponent.state().output).toEqual(4);
+      expect(renderedComponent.state().firstOperand).toBeNull();
+      expect(renderedComponent.state().operator).toBeNull();
+      expect(renderedComponent.state().secondOperand).toBeNull();
+
+      instance.updateOperator('+');
+      expect(renderedComponent.state().firstOperand).toEqual('4');
+      expect(renderedComponent.state().operator).toEqual('+');
     });
   });
 });

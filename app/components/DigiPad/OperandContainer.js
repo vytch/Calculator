@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { palette } from '../../styleContants';
 
 const OperandContainer = styled.div`
   display: flex;
@@ -7,9 +8,9 @@ const OperandContainer = styled.div`
   button {
     width: 33.333333%;
     height: 50px;
-    background: #cfd8dc;
-    border-top: 1px solid #37474f;
-    border-right: 1px solid #37474f;
+    background: ${palette.primary};
+    border-top: 1px solid ${palette.border};
+    border-right: 1px solid ${palette.border};
     &:nth-child(-n + 3) {
       border-top: none;
     }
@@ -19,11 +20,11 @@ const OperandContainer = styled.div`
     &:focus,
     &:hover {
       outline: none;
-      background: #b0bec5;
+      background: ${palette.primaryHover};
       cursor: pointer;
     }
     &:active {
-      background: #90a4ae;
+      background: ${palette.primaryActive};
     }
   }
 `;

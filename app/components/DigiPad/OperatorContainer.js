@@ -1,24 +1,25 @@
 import styled from 'styled-components';
+import { palette } from '../../styleContants';
 
 const OperatorContainer = styled.div`
   display: flex;
   flex-direction: column;
   button {
     height: 50px;
-    background: #546e7a;
+    background: ${palette.secondary};
     color: #fff;
-    border-left: 1px solid #37474f;
+    border-left: 1px solid ${palette.border};
     &:not(:first-child) {
-      border-top: 1px solid #37474f;
+      border-top: 1px solid ${palette.border};
     }
     &:focus,
     &:hover {
       outline: none;
-      background: #455a64;
+      background: ${palette.secondaryHover};
       cursor: pointer;
     }
     &:active {
-      background: #37474f;
+      background: ${palette.secondaryActive};
     }
   }
 `;
