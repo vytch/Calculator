@@ -1,7 +1,7 @@
 import React from 'react';
 import DigiPad from 'components/DigiPad';
+import Output from 'components/Output';
 import CalculatorContainer from './CalculatorContainer';
-import OutputContainer from './OutputContainer';
 import { calculator } from '../../utils/calculator';
 /* eslint-disable react/prefer-stateless-function */
 export default class HomePage extends React.PureComponent {
@@ -161,22 +161,13 @@ export default class HomePage extends React.PureComponent {
     }
     this.updateOutput();
   }
-  // Formal the output.
-  // Basically if the output is still null, we display 0.
-  formatOutput(output) {
-    if (output === null) {
-      return 0;
-    }
-    return output;
-  }
+
   render() {
     return (
       <div>
         <CalculatorContainer>
           <h1>My react calculator</h1>
-          <OutputContainer>
-            {this.formatOutput(this.state.output)}
-          </OutputContainer>
+          <Output value={this.state.output} />
           <DigiPad onInputTap={this.handleTap} />
         </CalculatorContainer>
       </div>
